@@ -1,6 +1,6 @@
 const isPromise = (value) => {
   if (value) {
-    if ("then" in value && typeof value.then === "function") return true;
+    if (typeof value.then === "function") return true;
   }
 };
 
@@ -16,21 +16,25 @@ function APlus(fn) {
   let status = STATUS.pending;
   let value;
 
-  const handlers = [];
+  let handlers = [];
 
   // low level state management
   const fulfill = (result) => {
-    status = STATUS.fulfilled;
-    value = result;
-    handlers.forEach(h.onFulfill(value));
-    handlers = [];
+    setTimeout(() => {
+      status = STATUS.fulfilled;
+      value = result;
+      handlers.forEach((h) => h.onFulfill(value));
+      handlers = null;
+    }, 0);
   };
 
   const reject = (err) => {
-    status = STATUS.rejected;
-    value = err;
-    handlers.forEach(h.onReject(value));
-    handlers = [];
+    setTimeout(() => {
+      status = STATUS.rejected;
+      value = err;
+      handlers.forEach((h) => h.onReject(value));
+      handlers = null;
+    }, 0);
   };
 
   const innerResolve = (fn) => {
@@ -62,9 +66,10 @@ function APlus(fn) {
   };
 
   const handle = (onFulfill, onReject) => {
-    setTimeout(() => {
-      if (status === STATUS.pending) handlers.push({ onFulfill, onReject });
+    // putting this out of settimeout as evaluation will happen only after next tick
+    if (status === STATUS.pending) handlers.push({ onFulfill, onReject });
 
+    setTimeout(() => {
       if (status === STATUS.fulfilled) {
         if (typeof onFulfill === "function") onFulfill(value);
       }
@@ -89,20 +94,20 @@ function APlus(fn) {
             try {
               return resolve(onFulfill(result));
             } catch (ex) {
-              reject(ex);
+              return reject(ex);
             }
           }
-          resolve(result);
+          return resolve(result);
         },
         (error) => {
           if (isFunction(onReject)) {
             try {
-              return reject(onReject(error));
+              return resolve(onReject(error));
             } catch (ex) {
-              reject(ex);
+              return reject(ex);
             }
           }
-          reject(error);
+          return reject(error);
         }
       );
     });
@@ -110,3 +115,8 @@ function APlus(fn) {
 
   innerResolve(fn);
 }
+
+APlus.resolved = (value) => new APlus((res) => res(value));
+APlus.rejected = (value) => new APlus((_, rej) => rej(value));
+
+module.exports = APlus;

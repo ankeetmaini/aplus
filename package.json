@@ -1,8 +1,14 @@
 {
-  "name": "aplus",
-  "version": "0.0.1",
-  "description": "An a+ promise implementation",
-  "main": "src/index.js",
-  "author": "Ankeet Maini <ankeet.maini@gmail.com>",
-  "license": "MIT"
+ "name": "aplus",
+ "version": "0.0.1",
+ "description": "An a+ promise implementation",
+ "main": "src/index.js",
+ "author": "Ankeet Maini <ankeet.maini@gmail.com>",
+ "license": "MIT",
+ "scripts": {
+  "test": "promises-aplus-tests tests/adapter"
+ },
+ "devDependencies": {
+  "promises-aplus-tests": "^2.1.2"
+ }
 }
