@@ -20,21 +20,17 @@ function APlus(fn) {
 
   // low level state management
   const fulfill = (result) => {
-    setTimeout(() => {
-      status = STATUS.fulfilled;
-      value = result;
-      handlers.forEach((h) => h.onFulfill(value));
-      handlers = null;
-    }, 0);
+    status = STATUS.fulfilled;
+    value = result;
+    handlers.forEach((h) => h.onFulfill(value));
+    handlers = null;
   };
 
   const reject = (err) => {
-    setTimeout(() => {
-      status = STATUS.rejected;
-      value = err;
-      handlers.forEach((h) => h.onReject(value));
-      handlers = null;
-    }, 0);
+    status = STATUS.rejected;
+    value = err;
+    handlers.forEach((h) => h.onReject(value));
+    handlers = null;
   };
 
   const innerResolve = (fn) => {
@@ -67,9 +63,8 @@ function APlus(fn) {
 
   const handle = (onFulfill, onReject) => {
     // putting this out of settimeout as evaluation will happen only after next tick
-    if (status === STATUS.pending) handlers.push({ onFulfill, onReject });
-
     setTimeout(() => {
+      if (status === STATUS.pending) handlers.push({ onFulfill, onReject });
       if (status === STATUS.fulfilled) {
         if (typeof onFulfill === "function") onFulfill(value);
       }
