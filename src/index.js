@@ -42,7 +42,7 @@ function APlus(fn) {
           if (called) return;
           called = true;
           if (isPromise(result)) {
-            innerResolve(result);
+            innerResolve(result.then);
             return;
           }
           fulfill(result);

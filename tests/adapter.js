@@ -3,11 +3,12 @@ const APlus = require("../src/index");
 const adapter = {
   deferred() {
     let reject, resolve;
+    const promise = new APlus((res, rej) => {
+      reject = rej;
+      resolve = res;
+    });
     return {
-      promise: new APlus((res, rej) => {
-        reject = rej;
-        resolve = res;
-      }),
+      promise,
       resolve,
       reject,
     };
