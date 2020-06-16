@@ -1,6 +1,7 @@
-const isPromise = (value) => {
+const getThen = (value) => {
   if (value) {
-    if (typeof value.then === "function") return true;
+    const then = value.then;
+    if (typeof then === "function") return then;
   }
 };
 
@@ -41,8 +42,9 @@ function APlus(fn) {
         (result) => {
           if (called) return;
           called = true;
-          if (isPromise(result)) {
-            innerResolve(result.then);
+          const then = getThen(result);
+          if (then) {
+            innerResolve(then);
             return;
           }
           fulfill(result);
