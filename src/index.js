@@ -34,32 +34,36 @@ function APlus(fn) {
     handlers = null;
   };
 
-  const innerResolve = (fn) => {
+  const process = (fn) => {
     let called = false;
     try {
+      // calling actual promise constructor
       fn(
         // resolve
         (result) => {
           if (called) return;
           called = true;
+          // what if you resolved with a promise
+          // like object which has a `then`
+          // res(Promise.resolve(42))
           const then = getThen(result);
           if (then) {
-            innerResolve(then);
+            process(then);
             return;
           }
-          fulfill(result);
+          return fulfill(result);
         },
         // reject
         (error) => {
           if (called) return;
           called = true;
-          reject(error);
+          return reject(error);
         }
       );
     } catch (error) {
       if (called) return;
       called = true;
-      reject(error);
+      return reject(error);
     }
   };
 
@@ -110,7 +114,7 @@ function APlus(fn) {
     });
   };
 
-  innerResolve(fn);
+  process(fn);
 }
 
 APlus.resolved = (value) => new APlus((res) => res(value));
