@@ -46,12 +46,16 @@ function APlus(fn) {
           // what if you resolved with a promise
           // like object which has a `then`
           // res(Promise.resolve(42))
-          const then = getThen(result);
-          if (then) {
-            process(then);
-            return;
+          try {
+            const then = getThen(result);
+            if (then) {
+              process(then);
+              return;
+            }
+            return fulfill(result);
+          } catch (ex) {
+            return reject(ex);
           }
-          return fulfill(result);
         },
         // reject
         (error) => {
