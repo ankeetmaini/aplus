@@ -24,15 +24,19 @@ function APlus(fn) {
   const fulfill = (result) => {
     status = STATUS.fulfilled;
     value = result;
-    handlers.forEach((h) => h.onFulfill(value));
-    handlers = null;
+    setTimeout(() => {
+      handlers.forEach((h) => h.onFulfill(value));
+      handlers = null;
+    });
   };
 
   const reject = (err) => {
     status = STATUS.rejected;
     value = err;
-    handlers.forEach((h) => h.onReject(value));
-    handlers = null;
+    setTimeout(() => {
+      handlers.forEach((h) => h.onReject(value));
+      handlers = null;
+    });
   };
 
   const process = (fn) => {
