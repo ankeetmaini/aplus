@@ -53,7 +53,7 @@ function APlus(fn) {
           try {
             const then = getThen(result);
             if (then) {
-              process(then);
+              process(then.bind(result));
               return;
             }
             return fulfill(result);
