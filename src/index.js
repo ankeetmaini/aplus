@@ -1,5 +1,6 @@
 const getThen = (value) => {
-  if (value) {
+  const type = typeof value;
+  if (value && (type === "object" || type === "function")) {
     const then = value.then;
     if (typeof then === "function") return then;
   }
