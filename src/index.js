@@ -54,16 +54,39 @@ function APlus(fn) {
     if (status === STATUS.rejected) onReject(value);
   }
 
+  const isFunction = (fn) => {
+    if (typeof fn === "function") return true;
+    return false;
+  };
+
   this.then = (onFulfill, onReject) => {
     return new APlus((resolve, reject) => {
-      // save the handlers
+      // save the handlers wrapped with resolve and reject
       handle(
-        (result) => resolve(onFulfill(result)),
-        (error) => resolve(onReject(error))
+        (result) => {
+          // using onFulfill only if it's a function
+          if (isFunction(onFulfill)) {
+            resolve(onFulfill(result));
+            return;
+          }
+          // otherwise calling resolve directly
+          // user didn't pass a success handler
+          resolve(result);
+        },
+        (error) => {
+          if (isFunction(onReject)) {
+            resolve(onReject(error));
+            return;
+          }
+          // if `onReject` is not provided
+          // or if it's not a function
+          // then the promise would be rejected
+          reject(error);
+        }
       );
     });
   };
   process(fn);
 }
 
-//module.exports = APlus;
+module.exports = APlus;
