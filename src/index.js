@@ -20,15 +20,19 @@ function APlus(fn) {
   const fulfill = (result) => {
     status = STATUS.fulfilled;
     value = result;
-    // call each handler with the resolved value
-    handlers.forEach((h) => h.onFulfill(value));
+    setTimeout(() => {
+      // call each handler with the resolved value
+      handlers.forEach((h) => h.onFulfill(value));
+    }, 0);
   };
 
   const reject = (err) => {
     status = STATUS.rejected;
     value = err;
-    // call each handler with the rejected value
-    handlers.forEach((h) => h.onReject(value));
+    setTimeout(() => {
+      // call each handler with the rejected value
+      handlers.forEach((h) => h.onReject(value));
+    }, 0);
   };
 
   const process = (fn) => {
