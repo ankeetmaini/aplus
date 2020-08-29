@@ -28,10 +28,13 @@ function APlus(fn) {
   };
 
   const process = (fn) => {
+    let called = false;
     try {
       fn(
         // this is resolve
         (result) => {
+          if (called) return;
+          called = true;
           // check if result is a Promise-like object
           try {
             const then = getThen(result);
@@ -47,10 +50,14 @@ function APlus(fn) {
         },
         // this is reject
         (error) => {
+          if (called) return;
+          called = true;
           reject(error);
         }
       );
     } catch (err) {
+      if (called) return;
+      called = true;
       reject(err);
     }
   };
