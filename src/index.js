@@ -66,4 +66,4 @@ function APlus(fn) {
   process(fn);
 }
 
-//module.exports = APlus;
+module.exports = APlus;
