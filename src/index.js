@@ -36,7 +36,7 @@ function APlus(fn) {
           try {
             const then = getThen(result);
             if (then) {
-              process(then);
+              process(then.bind(result));
               return;
             }
           } catch (err) {
