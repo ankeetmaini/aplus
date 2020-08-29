@@ -63,11 +63,13 @@ function APlus(fn) {
   };
   function handle(onFulfill, onReject) {
     // save if pending
-    if (status === STATUS.pending) handlers.push({ onFulfill, onReject });
+    setTimeout(() => {
+      if (status === STATUS.pending) handlers.push({ onFulfill, onReject });
 
-    // call with the result if already resolved/rejected
-    if (status === STATUS.fulfilled) onFulfill(value);
-    if (status === STATUS.rejected) onReject(value);
+      // call with the result if already resolved/rejected
+      if (status === STATUS.fulfilled) onFulfill(value);
+      if (status === STATUS.rejected) onReject(value);
+    }, 0);
   }
 
   const isFunction = (fn) => {
