@@ -28,22 +28,31 @@ function APlus(fn) {
   };
 
   const process = (fn) => {
-    fn(
-      // this is resolve
-      (result) => {
-        // check if result is a Promise-like object
-        const then = getThen(result);
-        if (then) {
-          process(then);
-          return;
+    try {
+      fn(
+        // this is resolve
+        (result) => {
+          // check if result is a Promise-like object
+          try {
+            const then = getThen(result);
+            if (then) {
+              process(then);
+              return;
+            }
+          } catch (err) {
+            reject(err);
+            return;
+          }
+          fulfill(result);
+        },
+        // this is reject
+        (error) => {
+          reject(error);
         }
-        fulfill(result);
-      },
-      // this is reject
-      (error) => {
-        reject(error);
-      }
-    );
+      );
+    } catch (err) {
+      reject(err);
+    }
   };
   function handle(onFulfill, onReject) {
     // save if pending
@@ -66,7 +75,11 @@ function APlus(fn) {
         (result) => {
           // using onFulfill only if it's a function
           if (isFunction(onFulfill)) {
-            resolve(onFulfill(result));
+            try {
+              resolve(onFulfill(result));
+            } catch (err) {
+              reject(err);
+            }
             return;
           }
           // otherwise calling resolve directly
@@ -75,7 +88,11 @@ function APlus(fn) {
         },
         (error) => {
           if (isFunction(onReject)) {
-            resolve(onReject(error));
+            try {
+              resolve(onReject(error));
+            } catch (err) {
+              reject(err);
+            }
             return;
           }
           // if `onReject` is not provided
