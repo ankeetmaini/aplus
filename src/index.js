@@ -4,8 +4,11 @@ const STATUS = {
   rejected: 2,
 };
 const getThen = (value) => {
-  if (value && typeof value.then === "function") {
-    return value.then;
+  const type = typeof value;
+  if (type === "object" || type === "function") {
+    if (value && typeof value.then === "function") {
+      return value.then;
+    }
   }
 };
 function APlus(fn) {
