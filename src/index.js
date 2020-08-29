@@ -37,6 +37,9 @@ function APlus(fn) {
       fn(
         // this is resolve
         (result) => {
+          if (result === this) {
+            throw new TypeError();
+          }
           if (called) return;
           called = true;
           // check if result is a Promise-like object
@@ -54,6 +57,9 @@ function APlus(fn) {
         },
         // this is reject
         (error) => {
+          if (error === this) {
+            throw new TypeError();
+          }
           if (called) return;
           called = true;
           reject(error);
